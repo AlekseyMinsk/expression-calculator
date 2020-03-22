@@ -1,12 +1,183 @@
-function eval() {
-    // Do not use eval!!!
-    return;
+function expressionCalculator(expr) {
+	expr = expr.replace(/\s/g, '');
+	var brackets = expr.replace(/[0-9!-'*-.\\\/]/g, "").split('');
+	var bracketsArr = [];
+	var error = false;
+	for(var i = 0; i < brackets.length; i++) {
+		if(bracketsArr.length === 0 && brackets[i] === ")") {
+			error = true;
+			break;
+		} 
+		if(bracketsArr.length === 0 || brackets[i] === "("){
+			bracketsArr.push(brackets[i]);
+			continue;
+		} 
+		if(brackets[i] === ")" && bracketsArr[bracketsArr.length - 1] === "(") {
+			bracketsArr.pop();
+			continue;
+		}
+	}
+	if(error || bracketsArr.length) {
+		throw new Error('ExpressionError: Brackets must be paired');
+	}
+	arr = expr.split("");
+	
+    var numberArr = [];
+    var number = "";
+    arr.forEach((i, index) => {
+        if(!Number.isNaN(+i)) {
+            number += i;
+            if(index === arr.length -1) {
+                numberArr.push(+number)
+            }
+        } else {
+            if(number) {
+                numberArr.push(+number);
+                number = "";
+            }
+            numberArr.push(i)
+        }
+    })
+    //console.log(numberArr);
+    var openbracket = arr.indexOf("(");
+
+    if(openbracket === -1) {
+        return count(numberArr)
+    } else {
+        return;
+        // while(numberArr.length > 1) {
+        //     var openbracket = arr.indexOf("(");
+        // }
+    }
+    
+
+
+
+
 }
 
-function expressionCalculator(expr) {
-    // write your solution here
+function count(arr) {
+    function lastCount(a, b, symbol) {
+        switch (symbol) {
+          case "*":
+            return a*b;
+            break;
+          case "/":
+            if(b === 0) {
+                return false;
+            } else {
+                return a/b;
+            }
+            break;
+          case "+":
+            return a+b;
+            break;
+          case "-":
+            return a-b;
+            break;
+        }
+    }
+    while(arr.length  > 1) {
+        var del = arr.indexOf("/");
+        var mul = arr.indexOf("*");
+        if(del > 0 || mul > 0) {
+            for(var i = 0; i < arr.length; i++) {
+                if(arr[i] === "*" || arr[i] === "/") {
+                    var number = lastCount(arr[i-1], arr[i+1], arr[i]);
+                    if(number === false) {
+                        throw new Error('TypeError: Devision by zero.');
+                    }
+                    arr.splice(i-1, 3, number);
+                    break;
+                }
+            }
+            continue;
+        } else {
+            for(var i = 0; i < arr.length; i++) {
+                if(arr[i] === "-" || arr[i] === "+") {
+                    var number = lastCount(arr[i-1], arr[i+1], arr[i]);
+                    arr.splice(i-1, 3, number);
+                    break;
+                }
+            }
+            continue;
+        }        
+    }
+    return arr[0]
 }
 
 module.exports = {
     expressionCalculator
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+// function eval() {
+//     return;
+// }
+
+// function count2(arr) {
+//  while(arr.length > 1) {
+//         var del = arr.indexOf("/");
+//         var mul = arr.indexOf("*");
+
+//         if(del > -1) {
+//          console.log("test5");
+//          break;
+//             if((mul> -1) && mul < del) {
+//                 count = arr[mul - 1] * arr[mul + 1];
+//                 arr.splice(mul - 1, 3, count);    
+//                 continue;  
+//             } else {
+//              if(arr[del + 1] === "0") {
+//                  console.log("test");
+//                  throw new Error('TypeError: Devision by zero.');
+//                  break;
+//                  return;
+//              }
+//                 count = arr[del -1] / arr[del + 1];
+//                 arr.splice(del - 1, 3, count);
+//                 continue; 
+//             }
+//             console.log("test6");
+//         } if(mul> -1){
+//             count = arr[mul - 1] * arr[mul + 1];
+//             arr.splice(mul - 1, 3, count);    
+//             continue;  
+        
+//         } 
+//        // console.log("test10")
+//         var del = arr.indexOf("-");
+//         var mul = arr.indexOf("+");
+
+//         if(del > -1) {
+//             if((mul> -1) && mul < del) {
+//                 count = +arr[mul - 1] + +arr[mul + 1];
+//                 arr.splice(mul - 1, 3, count);    
+//                 continue;  
+//             } else {
+//                 count = +arr[del -1] - +arr[del + 1];
+//                 arr.splice(del - 1, 3, count);
+//                 continue; 
+//             }
+            
+            
+//         } if(mul> -1){
+//             count = +arr[mul - 1] + +arr[mul + 1];
+//             arr.splice(mul - 1, 3, count);    
+//             continue;  
+        
+//         }   
+//     }
+//     return arr;
+// }
