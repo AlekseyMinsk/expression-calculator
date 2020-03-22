@@ -39,21 +39,24 @@ function expressionCalculator(expr) {
         }
     })
     //console.log(numberArr);
-    var openbracket = arr.indexOf("(");
-
-    if(openbracket === -1) {
-        return count(numberArr)
-    } else {
-        return;
-        // while(numberArr.length > 1) {
-        //     var openbracket = arr.indexOf("(");
-        // }
-    }
     
 
+    while(numberArr.length > 1) {
+        var close = numberArr.indexOf(")");
+        var open = numberArr.lastIndexOf("(",close);
 
-
-
+        if(close === -1) {
+            numberArr = count(numberArr);
+            break;
+        } else {   
+            var currentArr =  numberArr.slice(open + 1, close);
+            currentArr = count(currentArr)[0];
+            numberArr.splice(open, close-open+1, currentArr);
+            continue;
+        }
+            
+    }
+    return numberArr[0];
 }
 
 function count(arr) {
@@ -85,7 +88,7 @@ function count(arr) {
                 if(arr[i] === "*" || arr[i] === "/") {
                     var number = lastCount(arr[i-1], arr[i+1], arr[i]);
                     if(number === false) {
-                        throw new Error('TypeError: Devision by zero.');
+                        throw new Error('TypeError: Division by zero.');
                     }
                     arr.splice(i-1, 3, number);
                     break;
@@ -103,7 +106,7 @@ function count(arr) {
             continue;
         }        
     }
-    return arr[0]
+    return arr;
 }
 
 module.exports = {
